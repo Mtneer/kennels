@@ -21,7 +21,7 @@ export const LocationProvider = (props) => {
             },
             body: JSON.stringify(locationObj)
         })
-        .then(getLocations)
+        .then(response => response.json())
     }
 
     /*

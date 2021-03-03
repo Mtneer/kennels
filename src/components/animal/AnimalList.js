@@ -1,39 +1,30 @@
-import React, { useContext, useEffect } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { AnimalContext } from "./AnimalProvider"
-import { LocationContext } from "../location/LocationProvider"
-import { CustomerContext } from "../customer/CustomerProvider"
 import { AnimalCard } from "./AnimalCard"
 import "./Animal.css"
 
-export const AnimalList = () => {
-  // This state changes when `getAnimals()` is invoked below
-  const { animals, getAnimals } = useContext(AnimalContext)
-  const { locations, getLocations } = useContext(LocationContext)
-  const { customers, getCustomers } = useContext(CustomerContext)
+export const AnimalList = ({ history }) => {
+    const { getAnimals, animals } = useContext(AnimalContext)
 
-  //useEffect - reach out to the world for something
-  useEffect(() => {
-    console.log("AnimalList: useEffect - getAnimals")
-    getLocations()
-    .then(getCustomers)
-    .then(getAnimals)
-  }, [])
+    // Initialization effect hook -> Go get animal data
+    useEffect(()=>{
+        getAnimals()
+    }, [])
 
+    return (
+        <>
+            <h1>Animals</h1>
 
-  return (
-    <div className="animals">
-      {console.log("AnimalList: Render", animals)}
-      {
-        animals.map(animal => {
-          const owner = customers.find(customer => customer.id === animal.customerId)
-          const clinic = locations.find(location => location.id === animal.locationId)
-
-          return <AnimalCard key={animal.id} 
-              location={clinic}
-              customer={owner}
-              animal={animal} />
-        })
-      }
-    </div>
-  )
+            <button onClick={() => history.push("/animals/create")}>
+                Make Reservation
+            </button>
+            <div className="animals">
+                {
+                    animals.map(animal => {
+                        return <AnimalCard key={animal.id} animal={animal} />
+                    })
+                }
+            </div>
+        </>
+    )
 }
