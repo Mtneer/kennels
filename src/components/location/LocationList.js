@@ -1,14 +1,14 @@
 import React, { useContext, useEffect } from "react"
 import { useHistory } from "react-router-dom"
 import { LocationContext } from "./LocationProvider"
-import { LocationCard } from "./LocationCard"
+import { LocationCard } from "./Location"
 import "./Location.css"
 
 export const LocationList = () => {
   // This state changes when `getLocations()` is invoked below
   const { locations, getLocations } = useContext(LocationContext)
   const history = useHistory()
-
+  console.log(locations)
   //useEffect - reach out to the world for something
   useEffect(() => {
     console.log("LocationList: useEffect - getLocations")

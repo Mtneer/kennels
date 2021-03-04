@@ -48,6 +48,8 @@ export const EmployeeForm = () => {
 
       const locationId = parseInt(employee.locationId)
 
+      employee.locationId = locationId
+
       if (locationId === 0) {
         window.alert("Please select a location")
       } else {

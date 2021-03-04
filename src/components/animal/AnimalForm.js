@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react"
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { LocationContext } from "../location/LocationProvider"
 import { AnimalContext } from "../animal/AnimalProvider"
 import { CustomerContext } from "../customer/CustomerProvider"
 import "./Animal.css"
 
 export const AnimalForm = () => {
-    const { addAnimal } = useContext(AnimalContext)
+    const { addAnimal, getAnimalById, updateAnimal } = useContext(AnimalContext)
     const { locations, getLocations } = useContext(LocationContext)
     const { customers, getCustomers } = useContext(CustomerContext)
 
@@ -16,22 +16,12 @@ export const AnimalForm = () => {
     Define the intial state of the form inputs with useState()
     */
 
-    const [animal, setAnimal] = useState({
-      name: "",
-      breed: "",
-      locationId: 0,
-      customerId: 0
-    });
+    const [animal, setAnimal] = useState({})
+    // wait for data before burron is active
+    const [isLoading, setIsLoading] = useState(true)
 
-    const history = useHistory();
-
-    /*
-    Reach out to the world and get customers state
-    and locations state on initialization.
-    */
-    useEffect(() => {
-      getCustomers().then(getLocations)
-    }, [])
+    const {animalId} = useParams()
+    const history = useHistory()
 
     //when a field changes, update state. The return will re-render and display based on the values in state
     //Controlled component
@@ -47,8 +37,9 @@ export const AnimalForm = () => {
       setAnimal(newAnimal)
     }
 
-    const handleClickSaveAnimal = (event) => {
-      event.preventDefault() //Prevents the browser from submitting the form
+    const handleClickSaveAnimal = () => {
+      
+      // event.preventDefault() //Prevents the browser from submitting the form
 
       const locationId = parseInt(animal.locationId)
       const customerId = parseInt(animal.customerId)
@@ -59,12 +50,50 @@ export const AnimalForm = () => {
       if (locationId === 0) {
         window.alert("Please select a location")
       } else {
-        //invoke addAnimal passing animal as an argument.
-        //once complete, change the url and display the animal list
-        addAnimal(animal)
-        .then(() => history.push("/animals"))
+        setIsLoading(true)
+        if (animalId) {
+          // PUT - update
+          updateAnimal({
+            id: animal.id,
+            name: animal.name,
+            locationId: animal.locationId,
+            customerId: animal.customerId
+          })
+          .then(() => history.push(`/animals/detail/${animal.id}`))
+        } else {
+          // POST - add
+          //invoke addAnimal passing animal as an argument.
+          //once complete, change the url and display the animal list
+          addAnimal({
+            name: animal.name,
+            locationId: animal.locationId,
+            customerId: animal.customerId
+          })
+          .then(() => history.push("/animals"))
+        }
       }
     }
+
+    /*
+    Reach out to the world and get customers state
+    and locations state on initialization. 
+    If animalId is in the URL, getAnimalById
+    */
+    useEffect(() => {
+      getCustomers()
+      .then(getLocations)
+      .then(() => {
+        if (animalId) {
+          getAnimalById(animalId)
+          .then(animal => {
+            setAnimal(animal)
+            setIsLoading(false)
+          })
+        } else {
+          setIsLoading(false)
+        }
+      })
+    }, [])
 
     return (
       <form className="animalForm">
@@ -107,9 +136,12 @@ export const AnimalForm = () => {
                   </select>
               </div>
           </fieldset>
-          <button className="btn btn-primary"
-            onClick={handleClickSaveAnimal}>
-            Save Animal
+          <button className="btn btn-primary" disable={isLoading}
+            onClick={event => {
+              event.preventDefault() 
+              handleClickSaveAnimal()
+            }}>
+            {animalId ? <>Save Animal</> : <>Add Animal</>}
           </button>
       </form>
     )
