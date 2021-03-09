@@ -56,6 +56,7 @@ export const AnimalForm = () => {
           updateAnimal({
             id: animal.id,
             name: animal.name,
+            breed: animal.breed,
             locationId: animal.locationId,
             customerId: animal.customerId
           })
@@ -66,6 +67,7 @@ export const AnimalForm = () => {
           //once complete, change the url and display the animal list
           addAnimal({
             name: animal.name,
+            breed: animal.breed,
             locationId: animal.locationId,
             customerId: animal.customerId
           })

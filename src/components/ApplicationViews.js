@@ -3,6 +3,7 @@ import { Route } from "react-router-dom"
 import "./Kennel.css"
 import { Home } from "./Home"
 
+import { AnimalSearch } from "./animal/AnimalSearch"
 import { AnimalDetail } from "./animal/AnimalDetail"
 import { AnimalForm } from "./animal/AnimalForm"
 import { AnimalList } from "./animal/AnimalList"
@@ -33,16 +34,17 @@ export const ApplicationViews = () => {
 
             {/* Render the animal list when http://localhost:3000/animals */}
             <AnimalProvider>
+                <Route exact path="/animals">
+                    <AnimalSearch />
+                    <AnimalList />
+                </Route>
+                <Route exact path="/animals/detail/:animalId(\d+)">
+                    <AnimalDetail />
+                </Route>
                 <LocationProvider>
                     <CustomerProvider>
-                        <Route exact path="/animals">
-                            <AnimalList />
-                        </Route>
                         <Route exact path="/animals/create">
                             <AnimalForm />
-                        </Route>
-                        <Route exact path="/animals/detail/:animalId(\d+)">
-                            <AnimalDetail />
                         </Route>
                         <Route exact path="/animals/edit/:animalId(\d+)">
                             <AnimalForm />
@@ -53,15 +55,15 @@ export const ApplicationViews = () => {
 
             {/* Render the employee list when http://localhost:3000/employees */}
             <EmployeeProvider>
+                <Route exact path="/employees">
+                    <EmployeeList />
+                </Route>
+                <Route exact path="/employees/detail/:employeeId(\d+)">
+                    <EmployeeDetail />
+                </Route>
                 <LocationProvider>
-                    <Route exact path="/employees">
-                        <EmployeeList />
-                    </Route>
                     <Route exact path="/employees/create">
                         <EmployeeForm />
-                    </Route>
-                    <Route exact path="/employees/detail/:employeeId(\d+)">
-                        <EmployeeDetail />
                     </Route>
                 </LocationProvider>
             </EmployeeProvider>
